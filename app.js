@@ -157,9 +157,12 @@ function addFiles(fileList) {
   Array.from(fileList).forEach(f => selectedFiles.push(f));
   renderPreviews();
 
-  // 촬영 모드면 자동으로 다시 카메라 열기
+  // 촬영 모드면 자동으로 "다음 촬영" 버튼 클릭
   if (isCameraMode) {
-    setTimeout(() => $('file-camera').click(), 300);
+    setTimeout(() => {
+      const btn = $('btn-camera-continue');
+      if (btn) btn.click();
+    }, 500);
   }
 }
 
