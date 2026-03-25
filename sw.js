@@ -1,5 +1,5 @@
 // ── REV: APP_REV와 반드시 동일하게 유지 ──
-const REV = 'r1';
+const REV = 'r1.1';
 
 // 설치: 즉시 활성화 (대기 상태 건너뜀)
 self.addEventListener('install', () => self.skipWaiting());
