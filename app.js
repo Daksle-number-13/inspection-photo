@@ -156,22 +156,6 @@ let isCameraMode = false;
 function addFiles(fileList) {
   Array.from(fileList).forEach(f => selectedFiles.push(f));
   renderPreviews();
-
-  console.log('addFiles called, isCameraMode:', isCameraMode);
-
-  // 촬영 모드면 자동으로 "다음 촬영" 버튼 클릭
-  if (isCameraMode) {
-    console.log('Camera mode ON, scheduling next shot...');
-    // 모바일에서 카메라 앱이 완전히 닫힐 때까지 충분한 시간 필요
-    setTimeout(() => {
-      const btn = $('btn-camera-continue');
-      console.log('Clicking continue button:', btn);
-      if (btn) {
-        btn.click();
-        console.log('Clicked!');
-      }
-    }, 1500);
-  }
 }
 
 function updatePhotoMode() {
@@ -424,14 +408,18 @@ function init() {
   }
 
   $('file-camera').addEventListener('change', e => {
-    if (e.target.files.length) addFiles(e.target.files);
-    e.target.value = ''; // 동일 파일 재선택 허용
-  });
+    if (e.target.files.length) {
+      addFiles(e.target.files);
 
-  // 모바일에서 카메라 앱이 닫힐 때의 포커스 이벤트
-  window.addEventListener('focus', () => {
-    console.log('Window focused, isCameraMode:', isCameraMode);
-    // 카메라 모드인 상태에서 다시 포커스됐다면 추가 조치 가능
+      // 촬영 모드이면 갤러리 선택 창 자동 열기
+      if (isCameraMode) {
+        setTimeout(() => {
+          console.log('Auto-opening gallery for next photo...');
+          $('file-gallery').click();
+        }, 800);
+      }
+    }
+    e.target.value = ''; // 동일 파일 재선택 허용
   });
 
   // ── 갤러리 버튼 (여러 장 동시 선택) ──
