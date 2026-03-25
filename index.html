@@ -1,1 +1,276 @@
-검사 사진 등록 시스템 <strong>Rev1</strong><br>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a73e8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="검사사진" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <!-- 캐시 비활성화 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>검사 사진 자동 등록 시스템</title>
+  <link rel="stylesheet" href="style.css?v=2">
+<style>
+/* 2D 픽셀 스타일 아이콘 */
+.pixel-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  background-size: 24px 24px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.pixel-camera {
+  background: linear-gradient(45deg, transparent 30%, currentColor 30%, currentColor 40%, transparent 40%, transparent 60%, currentColor 60%, currentColor 70%, transparent 70%),
+              linear-gradient(-45deg, transparent 30%, currentColor 30%, currentColor 40%, transparent 40%, transparent 60%, currentColor 60%, currentColor 70%, transparent 70%);
+  background-size: 4px 4px;
+  background-position: 0 0;
+}
+
+.pixel-gallery {
+  background:
+    linear-gradient(0deg, transparent 75%, currentColor 75%, currentColor 100%),
+    linear-gradient(90deg, transparent 75%, currentColor 75%, currentColor 100%);
+  background-size: 4px 4px;
+}
+
+.pixel-upload {
+  background:
+    linear-gradient(135deg, transparent 35%, currentColor 35%, currentColor 65%, transparent 65%),
+    linear-gradient(45deg, transparent 35%, currentColor 35%, currentColor 65%, transparent 65%);
+  background-size: 2px 2px;
+  background-position: 4px 4px, 4px 4px;
+}
+
+.pixel-check {
+  background:
+    linear-gradient(135deg, transparent 40%, currentColor 40%, currentColor 45%, transparent 45%),
+    linear-gradient(-45deg, transparent 55%, currentColor 55%, currentColor 60%, transparent 60%);
+  background-size: 2px 2px;
+}
+
+.pixel-settings {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 30%, currentColor 30%, currentColor 35%, transparent 35%),
+    linear-gradient(0deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%),
+    linear-gradient(90deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%);
+  background-size: 24px 24px;
+}
+
+.pixel-delete {
+  background:
+    linear-gradient(90deg, transparent 20%, currentColor 20%, currentColor 35%, transparent 35%, transparent 65%, currentColor 65%, currentColor 80%, transparent 80%),
+    linear-gradient(0deg, transparent 60%, currentColor 60%, currentColor 100%);
+  background-size: 2px 2px;
+  background-position: 0 0, 0 0;
+}
+</style>
+</head>
+<body>
+
+  <!-- ───── 헤더 ───── -->
+  <header class="app-header">
+    <h1>🔍 검사 사진 등록</h1>
+    <div class="header-controls">
+      <button id="btn-help" class="icon-btn" aria-label="도움말" title="사용 방법 보기">
+        <span style="font-size: 14px;">❓</span><br><span style="font-size: 10px;">도움말</span>
+      </button>
+      <button id="btn-settings" class="icon-btn" aria-label="설정" title="폴더 설정">
+        <span style="font-size: 14px;">⚙️</span><br><span style="font-size: 10px;">설정</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════
+       화면 1: 메인 (태그 입력 + 촬영 + 업로드)
+  ════════════════════════════════════════ -->
+  <main id="screen-main" class="screen active">
+
+    <section class="card">
+      <!-- 제목 및 설명 -->
+      <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #E8E5DF;">
+        <p style="font-size: 13px; color: #666; line-height: 1.6; margin: 0;">
+          📋 검사 항목별로 사진을 촬영하고, 세부 정보를 입력한 후 업로드하세요.<br>
+          한 번에 여러 장을 등록할 수 있습니다.
+        </p>
+      </div>
+
+      <!-- 일시 -->
+      <div class="field">
+        <label for="input-date">📅 촬영 일시</label>
+        <input type="date" id="input-date" title="검사를 수행한 날짜를 선택하세요" />
+      </div>
+
+      <!-- 업로드 폴더 -->
+      <div class="field">
+        <label for="select-folder">📁 업로드 위치</label>
+        <select id="select-folder" title="사진을 저장할 폴더를 선택하세요">
+          <option value="">— 폴더 선택 —</option>
+        </select>
+        <span class="hint">⚙️ 설정에서 Cloudike 폴더를 먼저 등록해주세요</span>
+      </div>
+
+      <!-- 제품 정보 -->
+      <div class="field">
+        <label for="input-product">제품 정보</label>
+        <div class="combo-row">
+          <input type="text" id="input-product" placeholder="제품명 입력" autocomplete="off" />
+          <select id="hist-product" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-product-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 발생 공정 -->
+      <div class="field">
+        <label for="input-process">발생 공정</label>
+        <div class="combo-row">
+          <input type="text" id="input-process" placeholder="공정명 입력" autocomplete="off" />
+          <select id="hist-process" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-process-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 불량 유형 -->
+      <div class="field">
+        <label for="input-defect">불량 유형</label>
+        <div class="combo-row">
+          <input type="text" id="input-defect" placeholder="불량 유형 입력" autocomplete="off" />
+          <select id="hist-defect" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-defect-tags" class="tag-list"></div>
+      </div>
+    </section>
+
+    <!-- 사진 선택 -->
+    <section class="card">
+      <h3 style="margin-bottom: 20px;">📸 사진 선택</h3>
+      <div id="photo-mode-normal" class="photo-buttons">
+        <button id="btn-camera" class="photo-btn" title="카메라로 연속 촬영을 시작합니다">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">📷</span>
+          촬영 시작
+        </button>
+        <button id="btn-gallery" class="photo-btn" title="갤러리에서 여러 장을 선택합니다">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">🖼️</span>
+          갤러리<br><span style="font-size: 11px;">(다중선택)</span>
+        </button>
+      </div>
+      <div id="photo-mode-camera" style="display:none;">
+        <div id="camera-preview-container" style="position: relative; width: 100%; margin-bottom: 16px; background: #000; border-radius: 8px; overflow: hidden;">
+          <video id="preview-video" style="width: 100%; height: auto; display: block;"></video>
+        </div>
+        <div class="photo-buttons" style="gap: 10px;">
+          <button id="btn-capture" class="photo-btn" title="사진을 촬영합니다" style="flex: 1; background-color: #2C9C7F;">
+            <span style="font-size: 24px; display: block; margin-bottom: 4px;">📸</span>
+            촬영
+          </button>
+          <button id="btn-camera-done" class="photo-btn" title="촬영을 종료합니다" style="flex: 1;">
+            <span style="font-size: 24px; display: block; margin-bottom: 4px;">✓</span>
+            완료
+          </button>
+        </div>
+      </div>
+      <!-- 갤러리 파일 인풋 -->
+      <input type="file" id="file-gallery" accept="image/*" multiple style="display:none" />
+
+      <!-- 미리보기 -->
+      <div id="preview-area" class="preview-area">
+        <span class="preview-placeholder">
+          💡 사진을 촬영하거나 갤러리에서 선택하세요<br>
+          <span style="font-size: 12px; color: #999; margin-top: 8px; display: block;">JPG, PNG 지원 | 최대 10장</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- 업로드 버튼 -->
+    <button id="btn-upload" class="upload-btn" title="선택한 사진들을 업로드합니다">
+      ☁️ 업로드
+    </button>
+
+    <div id="upload-status" class="upload-status" style="display:none"></div>
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       화면 2: 업로드 완료
+  ════════════════════════════════════════ -->
+  <main id="screen-done" class="screen">
+    <div class="done-card">
+      <div class="done-icon">✨</div>
+      <h2>업로드 완료!</h2>
+      <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+        모든 사진이 성공적으로 저장되었습니다.
+      </p>
+      <p id="done-filename" class="done-filename"></p>
+      <button id="btn-done-ok" class="upload-btn">새로 등록하기</button>
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       화면 3: 설정
+  ════════════════════════════════════════ -->
+  <main id="screen-settings" class="screen">
+    <div class="settings-header">
+      <button id="btn-back" class="icon-btn">← 뒤로</button>
+      <h2>설정 — 업로드 폴더 관리</h2>
+    </div>
+
+    <section class="card">
+      <div class="field">
+        <label for="setting-tag">태그명</label>
+        <input type="text" id="setting-tag" placeholder="예: 외주입고, 공정라인A" />
+      </div>
+      <div class="field">
+        <label for="setting-url">Cloudike 공유링크 URL</label>
+        <input type="url" id="setting-url" placeholder="https://..." />
+      </div>
+      <button id="btn-add-folder" class="upload-btn">+ 추가</button>
+    </section>
+
+    <section class="card">
+      <h3>등록된 폴더 목록</h3>
+      <ul id="folder-list" class="folder-list">
+        <li class="empty-msg">등록된 폴더가 없습니다</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3 style="margin-bottom: 16px;">⚙️ 설정 백업</h3>
+      <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+        현재 설정을 파일로 내보내거나 이전에 저장한 설정을 불러올 수 있습니다.
+      </p>
+      <div class="photo-buttons" style="gap: 10px;">
+        <button id="btn-export-settings" class="upload-btn" style="flex: 1;">
+          📥 설정 내보내기
+        </button>
+        <button id="btn-import-settings" class="upload-btn" style="flex: 1;">
+          📤 설정 불러오기
+        </button>
+      </div>
+      <input type="file" id="file-import-settings" accept=".json" style="display:none" />
+    </section>
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       앱 푸터
+  ════════════════════════════════════════ -->
+  <footer style="text-align: center; padding: 24px 16px 32px; color: #999; font-size: 12px; border-top: 1px solid #E8E5DF; margin-top: 40px;">
+    <p style="margin: 0; line-height: 1.8;">
+      검사 사진 등록 시스템 <strong>Rev1</strong><br>
+      2026-03-25 · Made by <strong>박진수_Park Jin-su</strong>
+    </p>
+  </footer>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>
