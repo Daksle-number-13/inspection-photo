@@ -1,0 +1,331 @@
+/* ─── 리셋 & 기본 ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1558b0;
+  --success: #34a853;
+  --danger: #ea4335;
+  --bg: #f1f3f4;
+  --card-bg: #ffffff;
+  --text: #202124;
+  --text-sub: #5f6368;
+  --border: #dadce0;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-size: 15px;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── 헤더 ─── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 56px;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
+
+.app-header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: background .15s;
+}
+.icon-btn:hover { background: rgba(255,255,255,.15); }
+
+/* ─── 화면 전환 ─── */
+.screen { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* ─── 카드 ─── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* ─── 폼 필드 ─── */
+.field {
+  margin-bottom: 14px;
+}
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="url"],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  appearance: auto;
+}
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,.15);
+}
+
+.hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-sub);
+  margin-top: 4px;
+}
+
+/* ─── 콤보 행 (텍스트 + 이력 셀렉트) ─── */
+.combo-row {
+  display: flex;
+  gap: 6px;
+}
+.combo-row input { flex: 1; }
+.hist-select {
+  width: auto;
+  min-width: 60px;
+  max-width: 90px;
+  padding: 10px 6px;
+  font-size: 13px;
+  color: var(--text-sub);
+  flex-shrink: 0;
+}
+
+/* ─── 이력 태그 목록 ─── */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e8f0fe;
+  color: var(--primary-dark);
+  border-radius: 20px;
+  padding: 3px 10px 3px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.tag-item:hover { background: #d2e3fc; }
+.tag-del {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-dark);
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  opacity: .7;
+}
+.tag-del:hover { opacity: 1; }
+
+/* ─── 사진 버튼 ─── */
+.photo-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.photo-btn {
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.photo-btn:hover {
+  border-color: var(--primary);
+  background: #e8f0fe;
+}
+
+/* ─── 미리보기 ─── */
+.preview-area {
+  min-height: 160px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg);
+}
+.preview-placeholder {
+  color: var(--text-sub);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+#preview-img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* ─── 업로드 버튼 ─── */
+.upload-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+  box-shadow: 0 2px 8px rgba(26,115,232,.35);
+}
+.upload-btn:hover { background: var(--primary-dark); }
+.upload-btn:active { transform: scale(.98); }
+.upload-btn:disabled {
+  background: var(--border);
+  color: var(--text-sub);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ─── 업로드 상태 ─── */
+.upload-status {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+.upload-status.error { background: #fce8e6; color: var(--danger); }
+.upload-status.loading { background: #e8f0fe; color: var(--primary-dark); }
+
+/* ─── 완료 화면 ─── */
+#screen-done {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+}
+#screen-done.active { display: flex; }
+
+.done-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 24px;
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+}
+.done-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+.done-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: var(--success);
+}
+.done-filename {
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-bottom: 24px;
+  word-break: break-all;
+}
+
+/* ─── 설정 화면 ─── */
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.settings-header h2 { font-size: 16px; }
+.settings-header .icon-btn { color: var(--text); font-size: 18px; }
+
+/* ─── 폴더 목록 ─── */
+.folder-list {
+  list-style: none;
+}
+.folder-list .empty-msg {
+  color: var(--text-sub);
+  font-size: 13px;
+  text-align: center;
+  padding: 16px 0;
+}
+.folder-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.folder-item:last-child { border-bottom: none; }
+.folder-item-info { flex: 1; overflow: hidden; }
+.folder-tag {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.folder-url {
+  font-size: 11px;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn-del-folder {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--danger);
+  font-size: 18px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  opacity: .7;
+  transition: opacity .15s;
+}
+.btn-del-folder:hover { opacity: 1; }

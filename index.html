@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a73e8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="검사사진" />
+  <title>검사 사진 자동 등록 시스템</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+  <!-- ───── 헤더 ───── -->
+  <header class="app-header">
+    <h1>📸 검사 사진 등록</h1>
+    <button id="btn-settings" class="icon-btn" aria-label="설정">⚙️</button>
+  </header>
+
+  <!-- ═══════════════════════════════════════
+       화면 1: 메인 (태그 입력 + 촬영 + 업로드)
+  ════════════════════════════════════════ -->
+  <main id="screen-main" class="screen active">
+
+    <section class="card">
+      <!-- 일시 -->
+      <div class="field">
+        <label for="input-date">일시</label>
+        <input type="date" id="input-date" />
+      </div>
+
+      <!-- 업로드 폴더 -->
+      <div class="field">
+        <label for="select-folder">업로드 폴더</label>
+        <select id="select-folder">
+          <option value="">— 폴더 선택 —</option>
+        </select>
+        <span class="hint">설정에서 폴더를 추가하세요</span>
+      </div>
+
+      <!-- 제품 정보 -->
+      <div class="field">
+        <label for="input-product">제품 정보</label>
+        <div class="combo-row">
+          <input type="text" id="input-product" placeholder="제품명 입력" autocomplete="off" />
+          <select id="hist-product" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-product-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 발생 공정 -->
+      <div class="field">
+        <label for="input-process">발생 공정</label>
+        <div class="combo-row">
+          <input type="text" id="input-process" placeholder="공정명 입력" autocomplete="off" />
+          <select id="hist-process" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-process-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 불량 유형 -->
+      <div class="field">
+        <label for="input-defect">불량 유형</label>
+        <div class="combo-row">
+          <input type="text" id="input-defect" placeholder="불량 유형 입력" autocomplete="off" />
+          <select id="hist-defect" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-defect-tags" class="tag-list"></div>
+      </div>
+    </section>
+
+    <!-- 사진 선택 -->
+    <section class="card">
+      <div class="photo-buttons">
+        <button id="btn-camera" class="photo-btn">📷 촬영</button>
+        <button id="btn-gallery" class="photo-btn">🖼️ 갤러리</button>
+      </div>
+      <!-- 숨겨진 파일 인풋 -->
+      <input type="file" id="file-camera" accept="image/*" capture="camera" style="display:none" />
+      <input type="file" id="file-gallery" accept="image/*" style="display:none" />
+
+      <!-- 미리보기 -->
+      <div id="preview-area" class="preview-area">
+        <span class="preview-placeholder">사진을 선택하면 여기에 표시됩니다</span>
+        <img id="preview-img" src="" alt="미리보기" style="display:none" />
+      </div>
+    </section>
+
+    <!-- 업로드 버튼 -->
+    <button id="btn-upload" class="upload-btn">☁️ 업로드</button>
+
+    <div id="upload-status" class="upload-status" style="display:none"></div>
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       화면 2: 업로드 완료
+  ════════════════════════════════════════ -->
+  <main id="screen-done" class="screen">
+    <div class="done-card">
+      <div class="done-icon">✅</div>
+      <h2>업로드 완료</h2>
+      <p id="done-filename" class="done-filename"></p>
+      <button id="btn-done-ok" class="upload-btn">확인</button>
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       화면 3: 설정
+  ════════════════════════════════════════ -->
+  <main id="screen-settings" class="screen">
+    <div class="settings-header">
+      <button id="btn-back" class="icon-btn">← 뒤로</button>
+      <h2>설정 — 업로드 폴더 관리</h2>
+    </div>
+
+    <section class="card">
+      <div class="field">
+        <label for="setting-tag">태그명</label>
+        <input type="text" id="setting-tag" placeholder="예: 외주입고, 공정라인A" />
+      </div>
+      <div class="field">
+        <label for="setting-url">Cloudike 공유링크 URL</label>
+        <input type="url" id="setting-url" placeholder="https://..." />
+      </div>
+      <button id="btn-add-folder" class="upload-btn">+ 추가</button>
+    </section>
+
+    <section class="card">
+      <h3>등록된 폴더 목록</h3>
+      <ul id="folder-list" class="folder-list">
+        <li class="empty-msg">등록된 폴더가 없습니다</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

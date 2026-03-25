@@ -1,0 +1,25 @@
+{
+  "name": "검사 사진 자동 등록 시스템",
+  "short_name": "검사사진",
+  "description": "품질팀 현장 사진 태그 기반 즉시 분류·업로드 PWA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f3f4",
+  "theme_color": "#1a73e8",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
