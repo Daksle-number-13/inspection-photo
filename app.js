@@ -151,16 +151,34 @@ function addToHist(key, value) {
 // 사진 선택 & 미리보기 (다중)
 // ═══════════════════════════════════════
 let selectedFiles = [];
+let isCameraMode = false;
 
 function addFiles(fileList) {
   Array.from(fileList).forEach(f => selectedFiles.push(f));
   renderPreviews();
+
+  // 촬영 모드면 자동으로 다시 카메라 열기
+  if (isCameraMode) {
+    setTimeout(() => $('file-camera').click(), 300);
+  }
+}
+
+function updatePhotoMode() {
+  const normalMode = $('photo-mode-normal');
+  const cameraMode = $('photo-mode-camera');
+  if (isCameraMode) {
+    normalMode.style.display = 'none';
+    cameraMode.style.display = 'flex';
+  } else {
+    normalMode.style.display = 'flex';
+    cameraMode.style.display = 'none';
+  }
 }
 
 function renderPreviews() {
   const area = $('preview-area');
   if (selectedFiles.length === 0) {
-    area.innerHTML = '<span class="preview-placeholder">사진을 선택하면 여기에 표시됩니다</span>';
+    area.innerHTML = '<span class="preview-placeholder">💡 사진을 촬영하거나 갤러리에서 선택하세요<br><span style="font-size: 12px; color: #999; margin-top: 8px; display: block;">JPG, PNG 지원 | 최대 10장</span></span>';
     return;
   }
   area.innerHTML = `
@@ -372,15 +390,39 @@ function init() {
     });
   });
 
-  // ── 카메라 버튼 (촬영마다 목록에 추가) ──
-  $('btn-camera').addEventListener('click', () => $('file-camera').click());
+  // ── 촬영 시작 버튼 (연속 촬영 모드 진입) ──
+  $('btn-camera').addEventListener('click', () => {
+    isCameraMode = true;
+    updatePhotoMode();
+    $('file-camera').click(); // 첫 촬영 시작
+  });
+
+  // ── 촬영 중 "다음 촬영" 버튼 ──
+  if ($('btn-camera-continue')) {
+    $('btn-camera-continue').addEventListener('click', () => {
+      $('file-camera').click();
+    });
+  }
+
+  // ── 촬영 완료 버튼 ──
+  if ($('btn-camera-done')) {
+    $('btn-camera-done').addEventListener('click', () => {
+      isCameraMode = false;
+      updatePhotoMode();
+    });
+  }
+
   $('file-camera').addEventListener('change', e => {
     if (e.target.files.length) addFiles(e.target.files);
     e.target.value = ''; // 동일 파일 재선택 허용
   });
 
   // ── 갤러리 버튼 (여러 장 동시 선택) ──
-  $('btn-gallery').addEventListener('click', () => $('file-gallery').click());
+  $('btn-gallery').addEventListener('click', () => {
+    isCameraMode = false; // 갤러리 선택 시 촬영 모드 종료
+    updatePhotoMode();
+    $('file-gallery').click();
+  });
   $('file-gallery').addEventListener('change', e => {
     if (e.target.files.length) addFiles(e.target.files);
     e.target.value = '';
@@ -392,6 +434,8 @@ function init() {
   // ── 완료 → 메인 복귀 ──
   $('btn-done-ok').addEventListener('click', () => {
     selectedFiles = [];
+    isCameraMode = false;
+    updatePhotoMode();
     renderPreviews();
     $('upload-status').style.display = 'none';
     $('file-camera').value = '';

@@ -146,14 +146,24 @@
     <!-- 사진 선택 -->
     <section class="card">
       <h3 style="margin-bottom: 20px;">📸 사진 선택</h3>
-      <div class="photo-buttons">
-        <button id="btn-camera" class="photo-btn" title="카메라로 새 사진을 촬영합니다 (한 번에 1장)">
+      <div id="photo-mode-normal" class="photo-buttons">
+        <button id="btn-camera" class="photo-btn" title="카메라로 연속 촬영을 시작합니다">
           <span style="font-size: 24px; display: block; margin-bottom: 4px;">📷</span>
-          촬영
+          촬영 시작
         </button>
         <button id="btn-gallery" class="photo-btn" title="갤러리에서 여러 장을 선택합니다">
           <span style="font-size: 24px; display: block; margin-bottom: 4px;">🖼️</span>
           갤러리<br><span style="font-size: 11px;">(다중선택)</span>
+        </button>
+      </div>
+      <div id="photo-mode-camera" class="photo-buttons" style="display:none; gap: 10px;">
+        <button id="btn-camera-continue" class="photo-btn" title="다음 사진을 촬영합니다" style="flex: 1;">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">📷</span>
+          다음 촬영
+        </button>
+        <button id="btn-camera-done" class="photo-btn" title="촬영을 종료합니다" style="flex: 1; background-color: #2C9C7F;">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">✓</span>
+          촬영 완료
         </button>
       </div>
       <!-- 숨겨진 파일 인풋 -->
