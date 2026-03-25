@@ -1,10 +1,12 @@
-const CACHE_NAME = 'inspection-photo-v1';
+const CACHE_NAME = 'inspection-photo-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
 // 설치: 정적 파일 캐싱
