@@ -84,13 +84,12 @@
         <button id="btn-gallery" class="photo-btn">🖼️ 갤러리</button>
       </div>
       <!-- 숨겨진 파일 인풋 -->
-      <input type="file" id="file-camera" accept="image/*" capture="camera" style="display:none" />
-      <input type="file" id="file-gallery" accept="image/*" style="display:none" />
+      <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" />
+      <input type="file" id="file-gallery" accept="image/*" multiple style="display:none" />
 
       <!-- 미리보기 -->
       <div id="preview-area" class="preview-area">
         <span class="preview-placeholder">사진을 선택하면 여기에 표시됩니다</span>
-        <img id="preview-img" src="" alt="미리보기" style="display:none" />
       </div>
     </section>
 

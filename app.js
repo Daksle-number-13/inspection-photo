@@ -148,21 +148,51 @@ function addToHist(key, value) {
 }
 
 // ═══════════════════════════════════════
-// 사진 선택 & 미리보기
+// 사진 선택 & 미리보기 (다중)
 // ═══════════════════════════════════════
-let selectedFile = null;
+let selectedFiles = [];
 
-function handleFileSelect(file) {
-  if (!file) return;
-  selectedFile = file;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = $('preview-img');
-    img.src = e.target.result;
-    img.style.display = 'block';
-    $('preview-area').querySelector('.preview-placeholder').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+function addFiles(fileList) {
+  Array.from(fileList).forEach(f => selectedFiles.push(f));
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const area = $('preview-area');
+  if (selectedFiles.length === 0) {
+    area.innerHTML = '<span class="preview-placeholder">사진을 선택하면 여기에 표시됩니다</span>';
+    return;
+  }
+  area.innerHTML = `
+    <div class="preview-header">
+      <span>${selectedFiles.length}장 선택됨</span>
+      <button class="btn-clear-all" id="btn-clear-all">전체 삭제</button>
+    </div>
+    <div class="preview-grid" id="preview-grid"></div>
+  `;
+  $('btn-clear-all').addEventListener('click', () => {
+    selectedFiles = [];
+    renderPreviews();
+  });
+  selectedFiles.forEach((f, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'preview-thumb';
+    thumb.innerHTML = `<button class="thumb-del" data-idx="${i}">×</button>`;
+    $('preview-grid').appendChild(thumb);
+    thumb.querySelector('.thumb-del').addEventListener('click', e => {
+      e.stopPropagation();
+      selectedFiles.splice(parseInt(e.target.dataset.idx, 10), 1);
+      renderPreviews();
+    });
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.alt = `사진 ${i + 1}`;
+      thumb.insertBefore(img, thumb.firstChild);
+    };
+    reader.readAsDataURL(f);
+  });
 }
 
 // ═══════════════════════════════════════
@@ -173,7 +203,7 @@ async function uploadToCloudike(file, shareUrl, folderName, fileName) {
   // 예: https://app.cloudike.kr/public/QcO1RAb6o → hash = QcO1RAb6o
   const url = new URL(shareUrl.trim());
   const hash = url.pathname.split('/').filter(Boolean).pop();
-  const filePath = '/' + fileName;
+  const filePath = '/' + folderName + '/' + fileName;
 
   // ── 1단계: 업로드 URL 발급 (GraphQL CreatePublicFile) ──
   const APOLLO = 'https://apollo.cloudike.kr/graphql';
@@ -235,25 +265,14 @@ async function uploadToCloudike(file, shareUrl, folderName, fileName) {
 // 업로드 실행
 // ═══════════════════════════════════════
 async function handleUpload() {
-  const statusEl = $('upload-status');
-
   // 유효성 검사
   const folderIdx = $('select-folder').value;
-  if (folderIdx === '') {
-    showStatus('업로드 폴더를 선택하세요.', 'error');
-    return;
-  }
-  if (!selectedFile) {
-    showStatus('사진을 먼저 선택하거나 촬영하세요.', 'error');
-    return;
-  }
+  if (folderIdx === '') { showStatus('업로드 폴더를 선택하세요.', 'error'); return; }
+  if (selectedFiles.length === 0) { showStatus('사진을 먼저 선택하거나 촬영하세요.', 'error'); return; }
 
   const folders = getFolders();
   const folder = folders[parseInt(folderIdx, 10)];
-  if (!folder) {
-    showStatus('폴더 정보를 찾을 수 없습니다.', 'error');
-    return;
-  }
+  if (!folder) { showStatus('폴더 정보를 찾을 수 없습니다.', 'error'); return; }
 
   const date    = $('input-date').value || todayStr();
   const product = $('input-product').value.trim();
@@ -261,30 +280,39 @@ async function handleUpload() {
   const defect  = $('input-defect').value.trim();
 
   const folderName = `${safe(date)}_${safe(folder.tag)}_${safe(product)}_${safe(process)}_${safe(defect)}`;
-  const ext = selectedFile.name.split('.').pop() || 'jpg';
-  const ts  = Date.now();
-  const fileName = `${folderName}_${ts}.${ext}`;
 
   const btn = $('btn-upload');
   btn.disabled = true;
-  showStatus('⏳ 업로드 중...', 'loading');
 
-  try {
-    await uploadToCloudike(selectedFile, folder.url, folderName, fileName);
+  const total = selectedFiles.length;
+  const errors = [];
 
-    // 이력 저장
+  for (let i = 0; i < total; i++) {
+    showStatus(`⏳ 업로드 중... (${i + 1}/${total})`, 'loading');
+    const file = selectedFiles[i];
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const fileName = `${Date.now()}_${String(i + 1).padStart(3, '0')}.${ext}`;
+    try {
+      await uploadToCloudike(file, folder.url, folderName, fileName);
+    } catch (err) {
+      errors.push(`${i + 1}번: ${err.message}`);
+    }
+  }
+
+  btn.disabled = false;
+  const succeeded = total - errors.length;
+
+  if (errors.length === 0) {
     addToHist(LS_HIST_PRODUCT, product);
     addToHist(LS_HIST_PROCESS, process);
     addToHist(LS_HIST_DEFECT,  defect);
     renderAllHist();
-
-    // 완료 화면
-    $('done-filename').textContent = folderName + '/' + fileName;
+    $('done-filename').textContent = `${total}장 → ${folderName}/`;
     showScreen('screen-done');
-  } catch (err) {
-    showStatus(`❌ ${err.message}`, 'error');
-  } finally {
-    btn.disabled = false;
+  } else if (succeeded > 0) {
+    showStatus(`⚠️ ${succeeded}/${total}장 완료, 실패: ${errors[0]}`, 'error');
+  } else {
+    showStatus(`❌ ${errors[0]}`, 'error');
   }
 }
 
@@ -328,24 +356,27 @@ function init() {
     });
   });
 
-  // ── 카메라 버튼 ──
+  // ── 카메라 버튼 (촬영마다 목록에 추가) ──
   $('btn-camera').addEventListener('click', () => $('file-camera').click());
-  $('file-camera').addEventListener('change', e => handleFileSelect(e.target.files[0]));
+  $('file-camera').addEventListener('change', e => {
+    if (e.target.files.length) addFiles(e.target.files);
+    e.target.value = ''; // 동일 파일 재선택 허용
+  });
 
-  // ── 갤러리 버튼 ──
+  // ── 갤러리 버튼 (여러 장 동시 선택) ──
   $('btn-gallery').addEventListener('click', () => $('file-gallery').click());
-  $('file-gallery').addEventListener('change', e => handleFileSelect(e.target.files[0]));
+  $('file-gallery').addEventListener('change', e => {
+    if (e.target.files.length) addFiles(e.target.files);
+    e.target.value = '';
+  });
 
   // ── 업로드 버튼 ──
   $('btn-upload').addEventListener('click', handleUpload);
 
   // ── 완료 → 메인 복귀 ──
   $('btn-done-ok').addEventListener('click', () => {
-    // 폼 리셋
-    selectedFile = null;
-    $('preview-img').style.display = 'none';
-    $('preview-img').src = '';
-    $('preview-area').querySelector('.preview-placeholder').style.display = '';
+    selectedFiles = [];
+    renderPreviews();
     $('upload-status').style.display = 'none';
     $('file-camera').value = '';
     $('file-gallery').value = '';
