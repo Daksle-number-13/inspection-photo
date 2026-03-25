@@ -11,5 +11,5 @@ self.addEventListener('activate', event => {
 // 모든 요청은 네트워크에서 직접 가져옴 (캐시 사용 안 함)
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(fetch(event.request));
+  event.respondWith(fetch(event.request, { cache: 'no-store' }));
 });
