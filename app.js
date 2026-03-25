@@ -177,11 +177,12 @@ function renderPreviews() {
   selectedFiles.forEach((f, i) => {
     const thumb = document.createElement('div');
     thumb.className = 'preview-thumb';
-    thumb.innerHTML = `<button class="thumb-del" data-idx="${i}">×</button>`;
+    thumb.innerHTML = `<button class="thumb-del" type="button">×</button>`;
     $('preview-grid').appendChild(thumb);
     thumb.querySelector('.thumb-del').addEventListener('click', e => {
       e.stopPropagation();
-      selectedFiles.splice(parseInt(e.target.dataset.idx, 10), 1);
+      const idx = selectedFiles.indexOf(f);
+      if (idx !== -1) selectedFiles.splice(idx, 1);
       renderPreviews();
     });
     const reader = new FileReader();
