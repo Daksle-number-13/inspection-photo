@@ -173,24 +173,50 @@ async function uploadToCloudike(file, shareUrl, folderName, fileName) {
   // 예: https://app.cloudike.kr/public/QcO1RAb6o → hash = QcO1RAb6o
   const url = new URL(shareUrl.trim());
   const hash = url.pathname.split('/').filter(Boolean).pop();
-  const filePath = `/${folderName}/${fileName}`;
+  const filePath = '/' + fileName;
 
-  // Cloudike REST API: POST /api/2/public/{hash}/files/
-  const uploadUrl = `${url.origin}/api/2/public/${hash}/files/?path=${encodeURIComponent(filePath)}`;
-
-  const formData = new FormData();
-  formData.append('file', file, fileName);
-
-  const resp = await fetch(uploadUrl, {
+  // ── 1단계: 업로드 URL 발급 (GraphQL CreatePublicFile) ──
+  const APOLLO = 'https://apollo.cloudike.kr/graphql';
+  const createRes = await fetch(APOLLO + '?o=CreatePublicFile', {
     method: 'POST',
-    body: formData,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      operationName: 'CreatePublicFile',
+      variables: {
+        input: { hash, path: filePath, size: file.size, overwrite: true, multipart: false }
+      },
+      query: `mutation CreatePublicFile($input: CreateFileInput!) {
+        createPublicFile(input: $input) { url confirmUrl }
+      }`
+    })
   });
 
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => '');
-    throw new Error(`업로드 실패: HTTP ${resp.status}${text ? ` — ${text.slice(0, 120)}` : ''}`);
+  const createData = await createRes.json();
+  const uploadUrl  = createData?.data?.createPublicFile?.url;
+  const confirmUrl = createData?.data?.createPublicFile?.confirmUrl;
+
+  if (!uploadUrl) {
+    const msg = createData?.errors?.[0]?.message || JSON.stringify(createData).slice(0, 120);
+    throw new Error(`업로드 URL 생성 실패: ${msg}`);
   }
-  return uploadUrl;
+
+  // ── 2단계: 서명된 URL로 파일 PUT 전송 ──
+  const putRes = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type || 'image/jpeg' },
+    body: file
+  });
+
+  if (!putRes.ok) {
+    throw new Error(`파일 전송 실패: HTTP ${putRes.status}`);
+  }
+
+  // ── 3단계: 업로드 확정 ──
+  if (confirmUrl) {
+    await fetch(confirmUrl, { method: 'GET' }).catch(() => {});
+  }
+
+  return filePath;
 }
 
 // ═══════════════════════════════════════
