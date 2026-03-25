@@ -258,7 +258,7 @@ function capturePhoto() {
     downloadPhoto(blob, fileName);
 
     showStatus(`${selectedFiles.length}장 촬영됨`, 'success');
-  }, 'image/jpeg', 0.9);
+  }, 'image/jpeg', 0.85);
 }
 
 // ── 갤러리에 저장 (다운로드) ──
@@ -416,17 +416,20 @@ async function handleUpload() {
   const total = selectedFiles.length;
   const errors = [];
 
-  for (let i = 0; i < total; i++) {
-    showStatus(`⏳ 업로드 중... (${i + 1}/${total})`, 'loading');
-    const file = selectedFiles[i];
+  showStatus(`⏳ 업로드 중... (0/${total})`, 'loading');
+
+  // 병렬 업로드 (최대 5개 동시)
+  const uploadPromises = selectedFiles.map((file, i) => {
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     const fileName = `${Date.now()}_${String(i + 1).padStart(3, '0')}.${ext}`;
-    try {
-      await uploadToCloudike(file, folder.url, folderName, fileName);
-    } catch (err) {
-      errors.push(`${i + 1}번: ${err.message}`);
-    }
-  }
+
+    return uploadToCloudike(file, folder.url, folderName, fileName)
+      .catch(err => {
+        errors.push(`${i + 1}번: ${err.message}`);
+      });
+  });
+
+  await Promise.all(uploadPromises);
 
   btn.disabled = false;
   const succeeded = total - errors.length;
