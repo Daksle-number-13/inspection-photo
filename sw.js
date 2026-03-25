@@ -28,21 +28,38 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// 요청 가로채기: 캐시 우선 → 네트워크 폴백
+// 항상 네트워크 우선으로 가져올 파일 (버전 업데이트 즉시 반영)
+const NETWORK_FIRST = ['index.html', 'app.js', 'sw.js'];
+
+// 요청 가로채기
 self.addEventListener('fetch', event => {
-  // 업로드 요청(PUT)은 캐시하지 않음
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(resp => {
-        // 정상 응답만 캐시
+  const url = new URL(event.request.url);
+  const isNetworkFirst = NETWORK_FIRST.some(f => url.pathname.endsWith(f));
+
+  if (isNetworkFirst) {
+    // 네트워크 우선 → 실패 시 캐시 폴백
+    event.respondWith(
+      fetch(event.request).then(resp => {
         if (!resp || resp.status !== 200 || resp.type === 'opaque') return resp;
         const clone = resp.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return resp;
-      });
-    })
-  );
+      }).catch(() => caches.match(event.request))
+    );
+  } else {
+    // 캐시 우선 → 네트워크 폴백
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(resp => {
+          if (!resp || resp.status !== 200 || resp.type === 'opaque') return resp;
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return resp;
+        });
+      })
+    );
+  }
 });
