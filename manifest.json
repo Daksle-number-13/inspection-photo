@@ -2,6 +2,7 @@
   "name": "검사 사진 자동 등록 시스템",
   "short_name": "검사사진",
   "description": "품질팀 현장 사진 태그 기반 즉시 분류·업로드 PWA",
+  "id": "/inspection-photo/",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
