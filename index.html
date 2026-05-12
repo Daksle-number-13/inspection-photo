@@ -90,7 +90,6 @@
         <div class="hist-inputs">
           <!-- 제품 정보 -->
           <div class="hist-input-wrap" id="wrap-product">
-            <label class="hist-label">제품 정보</label>
             <div class="hist-input-box" id="box-product">
               <input type="text" id="input-product" class="hist-text" placeholder="예: A001-엔진블록" autocomplete="off" />
               <span class="hist-arrow" id="arrow-product">▾</span>
@@ -100,7 +99,6 @@
 
           <!-- 이력(Lot No.) -->
           <div class="hist-input-wrap" id="wrap-lot">
-            <label class="hist-label">이력 (Lot No.)</label>
             <div class="hist-input-box" id="box-lot">
               <input type="text" id="input-lot" class="hist-text" placeholder="예: LOT-2026-001" autocomplete="off" />
               <span class="hist-arrow" id="arrow-lot">▾</span>
@@ -110,7 +108,6 @@
 
           <!-- 발생 공정 -->
           <div class="hist-input-wrap" id="wrap-process">
-            <label class="hist-label">발생 공정</label>
             <div class="hist-input-box" id="box-process">
               <input type="text" id="input-process" class="hist-text" placeholder="예: 프레스, 용접" autocomplete="off" />
               <span class="hist-arrow" id="arrow-process">▾</span>
@@ -120,7 +117,6 @@
 
           <!-- 불량 유형 -->
           <div class="hist-input-wrap" id="wrap-defect">
-            <label class="hist-label">불량 유형</label>
             <div class="hist-input-box" id="box-defect">
               <input type="text" id="input-defect" class="hist-text" placeholder="예: 스크래치" autocomplete="off" />
               <span class="hist-arrow" id="arrow-defect">▾</span>
@@ -156,8 +152,7 @@
         <!-- 사진 영역 -->
         <div id="photo-area">
           <div class="photo-empty">
-            <div style="font-size:30px">📸</div>
-            <div class="photo-empty-text">JPG, PNG · 다중 선택 가능</div>
+            <div class="photo-empty-text">사진을 촬영하거나 갤러리에서 선택하세요</div>
           </div>
         </div>
       </section>
@@ -179,7 +174,7 @@
   ════════════════════════════════════════ -->
   <div id="screen-uploading" class="screen">
     <div class="uploading-wrap">
-      <div class="uploading-cloud">☁</div>
+      <div class="uploading-cloud" id="uploading-cloud">☁</div>
       <div class="uploading-title">Cloudike 업로드 중</div>
       <div class="uploading-desc" id="uploading-desc">0장 저장 중...</div>
 
@@ -201,22 +196,20 @@
        화면 3: 완료
   ════════════════════════════════════════ -->
   <div id="screen-done" class="screen">
-    <div class="done-top" id="done-content">
-      <div class="done-check-wrap">
-        <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
-          <path d="M9 23l11 11 17-17" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <div class="done-top">
+      <div class="done-anim" id="done-anim">
+        <div class="done-check-wrap">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+            <polyline points="8,22 18,32 36,12" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="done-title">업로드 완료!</div>
+        <div class="done-desc">모든 사진이 성공적으로<br>Cloudike에 저장되었습니다.</div>
       </div>
-      <div class="done-title">업로드 완료!</div>
-      <div class="done-desc">모든 사진이 성공적으로<br>Cloudike에 저장되었습니다.</div>
     </div>
-    <div class="done-actions">
-      <button id="btn-done-new" class="cta-btn cta-active">
-        새로 등록하기
-      </button>
-      <button id="btn-done-back" class="secondary-btn">
-        돌아가기
-      </button>
+    <div class="done-bottom">
+      <button id="btn-done-new" class="cta-btn cta-active">새로 등록하기</button>
+      <button id="btn-done-back" class="btn-secondary">돌아가기</button>
     </div>
   </div>
 
@@ -224,67 +217,61 @@
        화면 4: 설정
   ════════════════════════════════════════ -->
   <div id="screen-settings" class="screen">
-    <header class="app-header">
-      <button id="btn-back" class="header-icon-btn back-btn">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M11 4L6 9l5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- 설정 헤더 -->
+    <header class="settings-header">
+      <button id="btn-back" class="settings-back-btn" aria-label="뒤로">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <div class="header-left">
-        <div class="header-subtitle">환경 설정</div>
-        <div class="header-title">업로드 폴더 관리</div>
+      <div class="settings-header-text">
+        <div class="settings-subtitle">환경 설정</div>
+        <div class="settings-title">업로드 폴더 관리</div>
       </div>
     </header>
 
-    <div class="scroll-area">
+    <div class="settings-scroll">
 
-      <!-- 폴더 추가 -->
+      <!-- 폴더 추가 카드 -->
       <section class="card">
-        <div class="card-header">
-          <div class="card-title">폴더 추가</div>
+        <div class="card-title" style="margin-bottom:14px">폴더 추가</div>
+        <div class="settings-inputs">
+          <input type="text" id="setting-tag" class="field-input" placeholder="태그명 (예: 외주입고)" />
+          <input type="url" id="setting-url" class="field-input" placeholder="Cloudike 공유링크 URL" />
         </div>
-        <div class="settings-fields">
-          <div>
-            <label for="setting-tag">태그명</label>
-            <input type="text" id="setting-tag" class="field-input" placeholder="예: 라인A, 불량전용" />
-          </div>
-          <div>
-            <label for="setting-url">Cloudike 공유링크 URL</label>
-            <input type="url" id="setting-url" class="field-input" placeholder="https://..." />
-          </div>
-          <button id="btn-add-folder" class="add-folder-btn" disabled>+ 폴더 추가</button>
-        </div>
+        <button id="btn-add-folder" class="btn-add-folder cta-disabled">+ 추가</button>
       </section>
 
-      <!-- 등록된 폴더 -->
+      <!-- 등록된 폴더 카드 -->
       <section class="card">
         <div class="card-header">
           <div class="card-title">등록된 폴더</div>
-          <div class="folder-count-badge" id="folder-count-badge">0개</div>
+          <div class="folder-count-badge" id="folder-count-badge"></div>
         </div>
-        <ul id="folder-list" class="folder-list-new"></ul>
+        <div id="folder-list" class="folder-list">
+          <div class="empty-msg">등록된 폴더가 없습니다</div>
+        </div>
       </section>
 
-      <!-- 설정 백업 -->
+      <!-- 설정 백업 카드 -->
       <section class="card">
-        <div class="card-header">
-          <div class="card-title">설정 백업</div>
+        <div class="card-title" style="margin-bottom:14px">설정 백업</div>
+        <div class="backup-btns">
+          <button id="btn-export-settings" class="btn-secondary" style="flex:1">📥 설정 내보내기</button>
+          <button id="btn-import-settings" class="btn-secondary" style="flex:1">📤 설정 불러오기</button>
         </div>
-        <div class="backup-row">
-          <button id="btn-export-settings" class="secondary-btn">📥 설정 내보내기</button>
-          <button id="btn-import-settings" class="secondary-btn">📤 설정 불러오기</button>
-        </div>
-        <input type="file" id="file-import-settings" accept=".json" style="display:none" />
-        <div class="version-info">
-          버전 <strong>Rev1.3</strong> · 2026-05-12<br>
-          Made by <strong>박진수_Park Jin-su</strong>
+        <div class="version-box">
+          버전 Rev1.3 · 2026-03-26 / Made by 박진수_Park Jin-su
         </div>
       </section>
 
-      <div style="height:24px"></div>
-    </div>
-  </div>
+      <div style="height:32px"></div>
+    </div><!-- /settings-scroll -->
 
-  <script src="app.js"></script>
+    <input type="file" id="file-import-settings" accept=".json" style="display:none" />
+  </div><!-- /screen-settings -->
+
+  <script src="app.js?v=3"></script>
 </body>
 </html>
