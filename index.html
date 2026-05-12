@@ -3,275 +3,270 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#2563EB" />
+  <meta name="theme-color" content="#1a73e8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="검사사진" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>검사 사진 자동 등록 시스템</title>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css" as="style" onload="this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css" /></noscript>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=2">
+<style>
+/* 2D 픽셀 스타일 아이콘 */
+.pixel-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  background-size: 24px 24px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.pixel-camera {
+  background: linear-gradient(45deg, transparent 30%, currentColor 30%, currentColor 40%, transparent 40%, transparent 60%, currentColor 60%, currentColor 70%, transparent 70%),
+              linear-gradient(-45deg, transparent 30%, currentColor 30%, currentColor 40%, transparent 40%, transparent 60%, currentColor 60%, currentColor 70%, transparent 70%);
+  background-size: 4px 4px;
+  background-position: 0 0;
+}
+
+.pixel-gallery {
+  background:
+    linear-gradient(0deg, transparent 75%, currentColor 75%, currentColor 100%),
+    linear-gradient(90deg, transparent 75%, currentColor 75%, currentColor 100%);
+  background-size: 4px 4px;
+}
+
+.pixel-upload {
+  background:
+    linear-gradient(135deg, transparent 35%, currentColor 35%, currentColor 65%, transparent 65%),
+    linear-gradient(45deg, transparent 35%, currentColor 35%, currentColor 65%, transparent 65%);
+  background-size: 2px 2px;
+  background-position: 4px 4px, 4px 4px;
+}
+
+.pixel-check {
+  background:
+    linear-gradient(135deg, transparent 40%, currentColor 40%, currentColor 45%, transparent 45%),
+    linear-gradient(-45deg, transparent 55%, currentColor 55%, currentColor 60%, transparent 60%);
+  background-size: 2px 2px;
+}
+
+.pixel-settings {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 30%, currentColor 30%, currentColor 35%, transparent 35%),
+    linear-gradient(0deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%),
+    linear-gradient(90deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%);
+  background-size: 24px 24px;
+}
+
+.pixel-delete {
+  background:
+    linear-gradient(90deg, transparent 20%, currentColor 20%, currentColor 35%, transparent 35%, transparent 65%, currentColor 65%, currentColor 80%, transparent 80%),
+    linear-gradient(0deg, transparent 60%, currentColor 60%, currentColor 100%);
+  background-size: 2px 2px;
+  background-position: 0 0, 0 0;
+}
+</style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════
-       화면 1: 메인
-  ════════════════════════════════════════ -->
-  <div id="screen-main" class="screen active">
-
-    <!-- 헤더 -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="header-subtitle">품질 관리</div>
-        <div class="header-title">검사 사진 등록</div>
-      </div>
-      <div class="header-controls">
-        <button id="btn-help" class="header-icon-btn" aria-label="도움말">?</button>
-        <button id="btn-settings" class="header-icon-btn" aria-label="설정">⚙</button>
-      </div>
-    </header>
-
-    <!-- 스텝 인디케이터 -->
-    <div class="step-indicator" id="step-indicator">
-      <div class="step-item" data-step="1" id="step-1">
-        <div class="step-circle" id="step-circle-1">1</div>
-        <div class="step-label">기본 정보</div>
-      </div>
-      <div class="step-line" id="step-line-1"></div>
-      <div class="step-item" data-step="2" id="step-2">
-        <div class="step-circle" id="step-circle-2">2</div>
-        <div class="step-label">제품 정보</div>
-      </div>
-      <div class="step-line" id="step-line-2"></div>
-      <div class="step-item" data-step="3" id="step-3">
-        <div class="step-circle" id="step-circle-3">3</div>
-        <div class="step-label">사진</div>
-      </div>
-    </div>
-
-    <!-- 스크롤 영역 -->
-    <div class="scroll-area">
-
-      <!-- 섹션 1: 기본 정보 -->
-      <section id="section-1" class="card">
-        <div class="card-header">
-          <div class="card-title">기본 정보</div>
-        </div>
-
-        <!-- 날짜 / 시각 -->
-        <div class="date-row">
-          <div class="date-field" style="flex:3">
-            <label for="input-date">촬영 일시</label>
-            <input type="date" id="input-date" class="field-input" />
-          </div>
-          <div class="date-field" style="flex:2">
-            <label for="input-time">시각</label>
-            <input type="time" id="input-time" class="field-input" />
-          </div>
-        </div>
-
-        <!-- 업로드 위치 -->
-        <div class="folder-section">
-          <label>업로드 위치</label>
-          <div id="folder-picker" class="folder-picker">
-            <!-- JS가 렌더링 -->
-          </div>
-        </div>
-      </section>
-
-      <!-- 섹션 2: 제품 정보 -->
-      <section id="section-2" class="card">
-        <div class="card-header">
-          <div class="card-title">제품 정보</div>
-        </div>
-
-        <div class="hist-inputs">
-          <!-- 제품 정보 -->
-          <div class="hist-input-wrap" id="wrap-product">
-            <div class="hist-input-box" id="box-product">
-              <input type="text" id="input-product" class="hist-text" placeholder="예: A001-엔진블록" autocomplete="off" />
-              <span class="hist-arrow" id="arrow-product">▾</span>
-            </div>
-            <div class="hist-dropdown" id="dropdown-product" style="display:none"></div>
-          </div>
-
-          <!-- 이력(Lot No.) -->
-          <div class="hist-input-wrap" id="wrap-lot">
-            <div class="hist-input-box" id="box-lot">
-              <input type="text" id="input-lot" class="hist-text" placeholder="예: LOT-2026-001" autocomplete="off" />
-              <span class="hist-arrow" id="arrow-lot">▾</span>
-            </div>
-            <div class="hist-dropdown" id="dropdown-lot" style="display:none"></div>
-          </div>
-
-          <!-- 발생 공정 -->
-          <div class="hist-input-wrap" id="wrap-process">
-            <div class="hist-input-box" id="box-process">
-              <input type="text" id="input-process" class="hist-text" placeholder="예: 프레스, 용접" autocomplete="off" />
-              <span class="hist-arrow" id="arrow-process">▾</span>
-            </div>
-            <div class="hist-dropdown" id="dropdown-process" style="display:none"></div>
-          </div>
-
-          <!-- 불량 유형 -->
-          <div class="hist-input-wrap" id="wrap-defect">
-            <div class="hist-input-box" id="box-defect">
-              <input type="text" id="input-defect" class="hist-text" placeholder="예: 스크래치" autocomplete="off" />
-              <span class="hist-arrow" id="arrow-defect">▾</span>
-            </div>
-            <div class="hist-dropdown" id="dropdown-defect" style="display:none"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 섹션 3: 사진 선택 -->
-      <section id="section-3" class="card">
-        <div class="card-header">
-          <div class="card-title">사진 선택</div>
-          <div id="photo-count-badge" class="photo-badge" style="display:none"></div>
-        </div>
-
-        <!-- 버튼 그리드 -->
-        <div class="photo-btn-grid">
-          <button id="btn-camera" class="photo-action-btn">
-            <span class="photo-btn-icon">📷</span>
-            <span class="photo-btn-label">촬영</span>
-          </button>
-          <button id="btn-gallery" class="photo-action-btn">
-            <span class="photo-btn-icon">🖼️</span>
-            <span class="photo-btn-label">갤러리</span>
-          </button>
-        </div>
-
-        <!-- 파일 인풋 -->
-        <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" />
-        <input type="file" id="file-gallery" accept="image/*" multiple style="display:none" />
-
-        <!-- 사진 영역 -->
-        <div id="photo-area">
-          <div class="photo-empty">
-            <div class="photo-empty-text">사진을 촬영하거나 갤러리에서 선택하세요</div>
-          </div>
-        </div>
-      </section>
-
-      <div style="height: 80px;"></div>
-    </div><!-- /scroll-area -->
-
-    <!-- 업로드 CTA (fixed bottom) -->
-    <div class="cta-wrap" id="cta-wrap">
-      <button id="btn-upload" class="cta-btn cta-disabled">
-        <span id="cta-text">사진을 선택하세요</span>
+  <!-- ───── 헤더 ───── -->
+  <header class="app-header">
+    <h1>🔍 검사 사진 등록</h1>
+    <div class="header-controls">
+      <button id="btn-help" class="icon-btn" aria-label="도움말" title="사용 방법 보기">
+        <span style="font-size: 14px;">❓</span><br><span style="font-size: 10px;">도움말</span>
+      </button>
+      <button id="btn-settings" class="icon-btn" aria-label="설정" title="폴더 설정">
+        <span style="font-size: 14px;">⚙️</span><br><span style="font-size: 10px;">설정</span>
       </button>
     </div>
-
-  </div><!-- /screen-main -->
-
-  <!-- ═══════════════════════════════════════
-       화면 2: 업로드 중
-  ════════════════════════════════════════ -->
-  <div id="screen-uploading" class="screen">
-    <div class="uploading-wrap">
-      <div class="uploading-cloud" id="uploading-cloud">☁</div>
-      <div class="uploading-title">Cloudike 업로드 중</div>
-      <div class="uploading-desc" id="uploading-desc">0장 저장 중...</div>
-
-      <div class="progress-wrap">
-        <div class="progress-header">
-          <span class="progress-label">진행률</span>
-          <span class="progress-pct" id="progress-pct">0%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-bar" id="progress-bar" style="width:0%"></div>
-        </div>
-      </div>
-
-      <div class="uploading-thumbs" id="uploading-thumbs"></div>
-    </div>
-  </div>
+  </header>
 
   <!-- ═══════════════════════════════════════
-       화면 3: 완료
+       화면 1: 메인 (태그 입력 + 촬영 + 업로드)
   ════════════════════════════════════════ -->
-  <div id="screen-done" class="screen">
-    <div class="done-top">
-      <div class="done-anim" id="done-anim">
-        <div class="done-check-wrap">
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-            <polyline points="8,22 18,32 36,12" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </div>
-        <div class="done-title">업로드 완료!</div>
-        <div class="done-desc">모든 사진이 성공적으로<br>Cloudike에 저장되었습니다.</div>
+  <main id="screen-main" class="screen active">
+
+    <section class="card">
+      <!-- 제목 및 설명 -->
+      <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #E8E5DF;">
+        <p style="font-size: 13px; color: #666; line-height: 1.6; margin: 0;">
+          📋 검사 항목별로 사진을 촬영하고, 세부 정보를 입력한 후 업로드하세요.<br>
+          한 번에 여러 장을 등록할 수 있습니다.
+        </p>
       </div>
-    </div>
-    <div class="done-bottom">
-      <button id="btn-done-new" class="cta-btn cta-active">새로 등록하기</button>
-      <button id="btn-done-back" class="btn-secondary">돌아가기</button>
-    </div>
-  </div>
+
+      <!-- 일시 -->
+      <div class="field">
+        <label for="input-date">📅 촬영 일시</label>
+        <input type="date" id="input-date" title="검사를 수행한 날짜를 선택하세요" />
+      </div>
+
+      <!-- 업로드 폴더 -->
+      <div class="field">
+        <label for="select-folder">📁 업로드 위치</label>
+        <select id="select-folder" title="사진을 저장할 폴더를 선택하세요">
+          <option value="">— 폴더 선택 —</option>
+        </select>
+        <span class="hint">⚙️ 설정에서 Cloudike 폴더를 먼저 등록해주세요</span>
+      </div>
+
+      <!-- 제품 정보 -->
+      <div class="field">
+        <label for="input-product">제품 정보</label>
+        <div class="combo-row">
+          <input type="text" id="input-product" placeholder="제품명 입력" autocomplete="off" />
+          <select id="hist-product" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-product-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 발생 공정 -->
+      <div class="field">
+        <label for="input-process">발생 공정</label>
+        <div class="combo-row">
+          <input type="text" id="input-process" placeholder="공정명 입력" autocomplete="off" />
+          <select id="hist-process" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-process-tags" class="tag-list"></div>
+      </div>
+
+      <!-- 불량 유형 -->
+      <div class="field">
+        <label for="input-defect">불량 유형</label>
+        <div class="combo-row">
+          <input type="text" id="input-defect" placeholder="불량 유형 입력" autocomplete="off" />
+          <select id="hist-defect" class="hist-select">
+            <option value="">이력</option>
+          </select>
+        </div>
+        <div id="hist-defect-tags" class="tag-list"></div>
+      </div>
+    </section>
+
+    <!-- 사진 선택 -->
+    <section class="card">
+      <h3 style="margin-bottom: 20px;">📸 사진 선택</h3>
+      <div id="photo-mode-normal" class="photo-buttons">
+        <button id="btn-camera" class="photo-btn" title="카메라로 연속 촬영을 시작합니다">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">📷</span>
+          촬영 시작
+        </button>
+        <button id="btn-gallery" class="photo-btn" title="갤러리에서 여러 장을 선택합니다">
+          <span style="font-size: 24px; display: block; margin-bottom: 4px;">🖼️</span>
+          갤러리<br><span style="font-size: 11px;">(다중선택)</span>
+        </button>
+      </div>
+      <div id="photo-mode-camera" style="display:none;">
+        <div id="camera-preview-container" style="position: relative; width: 100%; margin-bottom: 16px; background: #000; border-radius: 8px; overflow: hidden;">
+          <video id="preview-video" style="width: 100%; height: auto; display: block;"></video>
+        </div>
+        <div class="photo-buttons" style="gap: 10px;">
+          <button id="btn-capture" class="photo-btn" title="사진을 촬영합니다" style="flex: 1; background-color: #2C9C7F;">
+            <span style="font-size: 24px; display: block; margin-bottom: 4px;">📸</span>
+            촬영
+          </button>
+          <button id="btn-camera-done" class="photo-btn" title="촬영을 종료합니다" style="flex: 1;">
+            <span style="font-size: 24px; display: block; margin-bottom: 4px;">✓</span>
+            완료
+          </button>
+        </div>
+      </div>
+      <!-- 갤러리 파일 인풋 -->
+      <input type="file" id="file-gallery" accept="image/*" multiple style="display:none" />
+
+      <!-- 미리보기 -->
+      <div id="preview-area" class="preview-area">
+        <span class="preview-placeholder">
+          💡 사진을 촬영하거나 갤러리에서 선택하세요<br>
+          <span style="font-size: 12px; color: #999; margin-top: 8px; display: block;">JPG, PNG 지원 | 다중 선택 가능</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- 업로드 버튼 -->
+    <button id="btn-upload" class="upload-btn" title="선택한 사진들을 업로드합니다">
+      ☁️ 업로드
+    </button>
+
+    <div id="upload-status" class="upload-status" style="display:none"></div>
+  </main>
 
   <!-- ═══════════════════════════════════════
-       화면 4: 설정
+       화면 2: 업로드 완료
   ════════════════════════════════════════ -->
-  <div id="screen-settings" class="screen">
+  <main id="screen-done" class="screen">
+    <div class="done-card">
+      <div class="done-icon">✨</div>
+      <h2>업로드 완료!</h2>
+      <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+        모든 사진이 성공적으로 저장되었습니다.
+      </p>
+      <p id="done-filename" class="done-filename"></p>
+      <button id="btn-done-ok" class="upload-btn">새로 등록하기</button>
+    </div>
+  </main>
 
-    <!-- 설정 헤더 -->
-    <header class="settings-header">
-      <button id="btn-back" class="settings-back-btn" aria-label="뒤로">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <div class="settings-header-text">
-        <div class="settings-subtitle">환경 설정</div>
-        <div class="settings-title">업로드 폴더 관리</div>
+  <!-- ═══════════════════════════════════════
+       화면 3: 설정
+  ════════════════════════════════════════ -->
+  <main id="screen-settings" class="screen">
+    <div class="settings-header">
+      <button id="btn-back" class="icon-btn">← 뒤로</button>
+      <h2>설정 — 업로드 폴더 관리</h2>
+    </div>
+
+    <section class="card">
+      <div class="field">
+        <label for="setting-tag">태그명</label>
+        <input type="text" id="setting-tag" placeholder="예: 외주입고, 공정라인A" />
       </div>
-    </header>
+      <div class="field">
+        <label for="setting-url">Cloudike 공유링크 URL</label>
+        <input type="url" id="setting-url" placeholder="https://..." />
+      </div>
+      <button id="btn-add-folder" class="upload-btn">+ 추가</button>
+    </section>
 
-    <div class="settings-scroll">
+    <section class="card">
+      <h3>등록된 폴더 목록</h3>
+      <ul id="folder-list" class="folder-list">
+        <li class="empty-msg">등록된 폴더가 없습니다</li>
+      </ul>
+    </section>
 
-      <!-- 폴더 추가 카드 -->
-      <section class="card">
-        <div class="card-title" style="margin-bottom:14px">폴더 추가</div>
-        <div class="settings-inputs">
-          <input type="text" id="setting-tag" class="field-input" placeholder="태그명 (예: 외주입고)" />
-          <input type="url" id="setting-url" class="field-input" placeholder="Cloudike 공유링크 URL" />
-        </div>
-        <button id="btn-add-folder" class="btn-add-folder cta-disabled">+ 추가</button>
-      </section>
+    <section class="card">
+      <h3 style="margin-bottom: 16px;">⚙️ 설정 백업</h3>
+      <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+        현재 설정을 파일로 내보내거나 이전에 저장한 설정을 불러올 수 있습니다.
+      </p>
+      <div class="photo-buttons" style="gap: 10px;">
+        <button id="btn-export-settings" class="upload-btn" style="flex: 1;">
+          📥 설정 내보내기
+        </button>
+        <button id="btn-import-settings" class="upload-btn" style="flex: 1;">
+          📤 설정 불러오기
+        </button>
+      </div>
+      <input type="file" id="file-import-settings" accept=".json" style="display:none" />
+    </section>
+  </main>
 
-      <!-- 등록된 폴더 카드 -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-title">등록된 폴더</div>
-          <div class="folder-count-badge" id="folder-count-badge"></div>
-        </div>
-        <div id="folder-list" class="folder-list">
-          <div class="empty-msg">등록된 폴더가 없습니다</div>
-        </div>
-      </section>
+  <!-- ═══════════════════════════════════════
+       앱 푸터
+  ════════════════════════════════════════ -->
+  <footer style="text-align: center; padding: 24px 16px 32px; color: #999; font-size: 12px; border-top: 1px solid #E8E5DF; margin-top: 40px;">
+    <p style="margin: 0; line-height: 1.8;">
+      검사 사진 등록 시스템 <strong>Rev1.2</strong><br>
+      2026-03-26 · Made by <strong>박진수_Park Jin-su</strong>
+    </p>
+  </footer>
 
-      <!-- 설정 백업 카드 -->
-      <section class="card">
-        <div class="card-title" style="margin-bottom:14px">설정 백업</div>
-        <div class="backup-btns">
-          <button id="btn-export-settings" class="btn-secondary" style="flex:1">📥 설정 내보내기</button>
-          <button id="btn-import-settings" class="btn-secondary" style="flex:1">📤 설정 불러오기</button>
-        </div>
-        <div class="version-box">
-          버전 Rev1.3 · 2026-03-26 / Made by 박진수_Park Jin-su
-        </div>
-      </section>
-
-      <div style="height:32px"></div>
-    </div><!-- /settings-scroll -->
-
-    <input type="file" id="file-import-settings" accept=".json" style="display:none" />
-  </div><!-- /screen-settings -->
-
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
