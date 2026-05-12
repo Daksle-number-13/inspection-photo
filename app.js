@@ -20,7 +20,7 @@ const HIST_CONFIG = [
 ];
 
 // ═══════════════════════════════════════
-// 유�
+// 유틸
 // ═══════════════════════════════════════
 const $ = id => document.getElementById(id);
 
@@ -140,6 +140,7 @@ function renderFolderList() {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.index, 10);
       const folders = getFolders();
+      // 삭제되는 폴더가 선택 중이면 선택 해제
       if (folders[idx] && folders[idx].url === selectedFolder) {
         selectedFolder = '';
         selectedFolderTag = '';
@@ -215,7 +216,7 @@ function addToHist(key, value) {
  * 4개의 History Input 드롭다운 초기화
  * - 입력 시 실시간 필터링
  * - 화살표 클릭 시 전체 이력 열기/닫기
- * - 바깥 클릭 시 닫힐
+ * - 바깥 클릭 시 닫힘
  */
 function setupHistInputs() {
   HIST_CONFIG.forEach(cfg => {
@@ -329,6 +330,7 @@ function renderCarousel() {
     return;
   }
 
+  // 배지 업데이트
   badge.style.display = '';
   badge.textContent = `${n}장 선택`;
 
@@ -372,6 +374,7 @@ function renderCarousel() {
     </div>
   `;
 
+  // 삭제 버튼
   $('carousel-delete').addEventListener('click', () => {
     selectedFiles.splice(carouselIndex, 1);
     carouselIndex = Math.min(carouselIndex, selectedFiles.length - 1);
@@ -381,6 +384,7 @@ function renderCarousel() {
     updateCta();
   });
 
+  // 이전/다음 화살표
   if ($('carousel-prev')) {
     $('carousel-prev').addEventListener('click', () => {
       if (carouselIndex > 0) { carouselIndex--; renderCarousel(); }
@@ -392,6 +396,7 @@ function renderCarousel() {
     });
   }
 
+  // 썸네일 클릭
   $('carousel-thumbs').querySelectorAll('.carousel-thumb').forEach(thumb => {
     thumb.addEventListener('click', () => {
       carouselIndex = parseInt(thumb.dataset.idx, 10);
@@ -399,6 +404,7 @@ function renderCarousel() {
     });
   });
 
+  // 터치 스와이프
   setupCarouselSwipe();
 }
 
@@ -466,12 +472,14 @@ function updateStep() {
     }
   }
 
+  // 연결선
   const line1 = $('step-line-1');
   const line2 = $('step-line-2');
   if (line1) line1.className = 'step-line' + (activeStep > 1 ? ' done' : '');
   if (line2) line2.className = 'step-line' + (activeStep > 2 ? ' done' : '');
 }
 
+// 스텝 클릭 시 해당 섹션으로 스크롤
 function setupStepClick() {
   for (let s = 1; s <= 3; s++) {
     const item = $(`step-${s}`);
@@ -706,8 +714,12 @@ function init() {
     $('file-camera').click();
   });
   $('file-camera').addEventListener('change', e => {
-    if (e.target.files.length) addFiles(e.target.files);
+    const files = e.target.files;
     e.target.value = '';
+    if (files.length) {
+      addFiles(files);
+      setTimeout(() => $('file-camera').click(), 300);
+    }
   });
 
   $('btn-gallery').addEventListener('click', () => {
